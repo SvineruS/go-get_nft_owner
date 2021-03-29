@@ -6,10 +6,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
+	"math/big"
 )
 
 func query(hexAddress string, tokenId int) {
-	client, err := ethclient.Dial("https://rinkeby.infura.io")
+	client, err := ethclient.Dial("https://mainnet.infura.io/v3/01117e8ede8e4f36801a6a838b24f36c")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,7 +22,15 @@ func query(hexAddress string, tokenId int) {
 	}
 
 	fmt.Println("contract is loaded", instance)
-	// todo
+
+	tokenId_ := big.NewInt(int64(tokenId))
+
+	owner, err := instance.OwnerOf(nil, tokenId_)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Print(owner)
 }
 
 func main() {
