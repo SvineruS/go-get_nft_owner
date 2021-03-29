@@ -22,7 +22,6 @@ func GetOwner(hexAddress string, tokenId int) (*common.Address, error) {
 	}
 
 	tokenId_ := big.NewInt(int64(tokenId))
-
 	owner, err := instance.OwnerOf(nil, tokenId_)
 	if err != nil {
 		return nil, err
