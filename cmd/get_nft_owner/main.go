@@ -2,37 +2,41 @@ package main
 
 import (
 	"fmt"
-	ERC721 "get_nft_owner/assets/sol"
+	ERC721 "get_nft_owner/assets/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"math/big"
 )
 
-func query(hexAddress string, tokenId int) {
-	client, err := ethclient.Dial("https://mainnet.infura.io/v3/01117e8ede8e4f36801a6a838b24f36c")
+const InfuraUrl = "https://mainnet.infura.io/v3/01117e8ede8e4f36801a6a838b24f36c"
+
+func getOwner(hexAddress string, tokenId int) (*common.Address, error) {
+	client, err := ethclient.Dial(InfuraUrl)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	address := common.HexToAddress(hexAddress)
 	instance, err := ERC721.NewERC721(address, client)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-
-	fmt.Println("contract is loaded", instance)
 
 	tokenId_ := big.NewInt(int64(tokenId))
 
 	owner, err := instance.OwnerOf(nil, tokenId_)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	fmt.Print(owner)
+	return &owner, nil
 }
 
 func main() {
-	query("0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb", 6615)
+	owner, err := getOwner("0x06012c8cf97bead5deae237070f9587f8e7a266d", 1997323)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Owner is", owner)
 }
